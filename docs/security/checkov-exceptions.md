@@ -76,6 +76,53 @@ The architecture decision and consequences are documented in:
 
 This decision should be reconsidered for production environments.
 
+## Terraform State Backend Exceptions
+
+### CKV_AWS_144 - Cross-Region Replication
+
+Status: Accepted development trade-off.
+
+Cross-region replication is not enabled for the development Terraform
+state bucket.
+
+Bucket versioning provides recovery from accidental state overwrites or
+deletions within the current region.
+
+Cross-region disaster recovery should be reconsidered for production
+state.
+
+### CKV_AWS_18 - S3 Access Logging
+
+Status: Accepted development trade-off.
+
+Server access logging is not enabled for the development state bucket.
+
+Enabling it would require additional logging storage and lifecycle
+management that is not currently justified for this development
+environment.
+
+### CKV2_AWS_62 - S3 Event Notifications
+
+Status: Not currently applicable.
+
+No event-driven consumer exists for Terraform state changes.
+
+Notifications should be introduced only if a defined monitoring or
+automation requirement requires them.
+
+### CKV_AWS_145 - KMS Encryption
+
+Status: Accepted development trade-off.
+
+The development state bucket explicitly uses SSE-S3 with AES256
+encryption.
+
+A customer-managed KMS key is not introduced in the current
+cost-constrained environment.
+
+KMS-based encryption and stronger key-access controls should be
+reconsidered for production Terraform state.
+
 ## Policy
 
 A Checkov finding may only be skipped when:
