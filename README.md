@@ -312,6 +312,28 @@ Development is implemented first.
 Reusable Terraform modules are intended to support additional
 environments with environment-specific configuration.
 
+## Continuous Integration
+
+Infrastructure changes are automatically validated with GitHub Actions.
+
+The validation workflow runs on pushes and pull requests targeting
+`main` and executes:
+
+- Terraform formatting validation.
+- Terraform initialization without a backend.
+- Terraform configuration validation.
+- TFLint static analysis.
+- Checkov security scanning.
+
+The CI workflow does not receive AWS credentials and does not run
+`terraform plan` or `terraform apply`.
+
+Checkov exceptions must be explicitly scoped and documented rather than
+globally ignored.
+
+The workflow uses pinned tool versions and an Ubuntu 24.04 runner to
+improve reproducibility between local and CI validation.
+
 ## Planned Work
 
 Future phases include:
