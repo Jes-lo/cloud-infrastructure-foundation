@@ -50,3 +50,6 @@ Thumbs.db
 
 # Runtime Ansible inventory generated from Terraform outputs
 ansible/inventories/dev/hosts.yml
+
+# Local Terraform backend configuration
+terraform/environments/dev/backend.hcl
