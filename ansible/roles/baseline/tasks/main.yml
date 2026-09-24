@@ -1,0 +1,24 @@
+---
+- name: Ensure chronyd is enabled and running
+  ansible.builtin.service:
+    name: chronyd
+    enabled: true
+    state: started
+
+- name: Ensure SSH configuration directory exists
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Install SSH hardening configuration
+  ansible.builtin.template:
+    src: 00-cloud-infrastructure-hardening.conf.j2
+    dest: /etc/ssh/sshd_config.d/00-cloud-infrastructure-hardening.conf
+    owner: root
+    group: root
+    mode: "0600"
+    backup: true
+  notify: Validate and reload sshd

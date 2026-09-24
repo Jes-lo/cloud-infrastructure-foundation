@@ -47,3 +47,6 @@ __pycache__/
 # Operating systems
 .DS_Store
 Thumbs.db
+
+# Runtime Ansible inventory generated from Terraform outputs
+ansible/inventories/dev/hosts.yml

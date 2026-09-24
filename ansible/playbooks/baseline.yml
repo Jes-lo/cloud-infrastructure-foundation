@@ -1,0 +1,8 @@
+---
+- name: Apply Linux baseline configuration
+  hosts: workload
+  become: true
+  gather_facts: true
+
+  roles:
+    - baseline
