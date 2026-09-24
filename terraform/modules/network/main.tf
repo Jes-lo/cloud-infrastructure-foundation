@@ -1,4 +1,6 @@
 resource "aws_vpc" "this" {
+  #checkov:skip=CKV2_AWS_11:VPC Flow Logs are intentionally deferred for the cost-constrained development environment; see ADR-002.
+
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true

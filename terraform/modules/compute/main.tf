@@ -3,6 +3,8 @@ data "aws_ssm_parameter" "al2023_ami" {
 }
 
 resource "aws_instance" "workload" {
+  #checkov:skip=CKV_AWS_126:Detailed monitoring is intentionally disabled in the cost-constrained development environment.
+  #checkov:skip=CKV2_AWS_41:No IAM role is attached because the workload currently requires no AWS
   ami           = data.aws_ssm_parameter.al2023_ami.value
   instance_type = var.instance_type
 
