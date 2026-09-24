@@ -312,6 +312,33 @@ Development is implemented first.
 Reusable Terraform modules are intended to support additional
 environments with environment-specific configuration.
 
+## Remote Terraform State
+
+The development environment uses a dedicated Amazon S3 backend for
+Terraform state.
+
+The backend provides:
+
+- S3 versioning for state recovery.
+- Server-side AES256 encryption.
+- Public access blocking.
+- BucketOwnerEnforced ownership controls.
+- TLS-only access enforced by bucket policy.
+- Native S3 state locking with `use_lockfile = true`.
+- Lifecycle management for previous state versions.
+
+The state bucket is provisioned through the isolated
+`terraform/bootstrap/state-backend` configuration.
+
+Runtime backend configuration is supplied through a local,
+Git-ignored `backend.hcl` file.
+
+CI validates both Terraform configurations using isolated temporary
+Terraform data directories and `terraform init -backend=false`.
+
+GitHub Actions does not require AWS credentials or access to the
+remote Terraform state.
+
 ## Continuous Integration
 
 Infrastructure changes are automatically validated with GitHub Actions.
@@ -339,9 +366,6 @@ improve reproducibility between local and CI validation.
 Future phases include:
 
 - Additional Linux baseline controls where justified.
-- Infrastructure CI/CD with GitHub Actions.
-- Automated validation in pull requests.
-- Remote Terraform state design.
 - Cloud logging and monitoring decisions.
 - Operational runbooks.
 - Additional environment reuse.
