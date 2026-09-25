@@ -1,0 +1,10 @@
+operator_principal_arn      = "arn:aws:iam::<ACCOUNT_ID>:user/<BOOTSTRAP_USER>"
+state_bucket_name           = "<TERRAFORM_STATE_BUCKET>"
+
+vpc_id                      = "vpc-xxxxxxxxxxxxxxxxx"
+private_subnet_id           = "subnet-xxxxxxxxxxxxxxxxx"
+workload_security_group_id  = "sg-xxxxxxxxxxxxxxxxx"
+eice_security_group_id      = "sg-xxxxxxxxxxxxxxxxx"
+
+approved_ami_id             = "ami-xxxxxxxxxxxxxxxxx"
+private_subnet_cidr         = "10.20.20.0/24"

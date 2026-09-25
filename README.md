@@ -28,6 +28,10 @@ The development environment currently includes:
 - Linux and SSH security baseline.
 - Terraform-to-Ansible runtime inventory integration.
 - Terraform validation, TFLint, and Checkov security analysis.
+- Encrypted remote Terraform state with native S3 locking.
+- Dedicated least-privilege Terraform operator role for routine operations.
+- Separate Terraform bootstrap stack for IAM operator administration.
+- Regional and cost guardrails applied to the Terraform operator.
 - Architecture Decision Records.
 - Incident and validation documentation.
 
@@ -91,7 +95,16 @@ The repository uses reusable modules for:
 - Private administrative access.
 - Compute.
 
-Terraform state is currently local during the development phase.
+Terraform state is separated according to bootstrap responsibility.
+
+The development environment uses encrypted remote S3 state with native
+state locking.
+
+The Terraform operator IAM stack also uses remote state under its own
+isolated S3 state key.
+
+The `state-backend` bootstrap stack retains local state because that stack
+creates the remote backend itself.
 
 Environment-specific Terraform configuration is stored under:
 
@@ -172,6 +185,45 @@ The design avoids:
 The reasoning is documented in:
 
 `docs/decisions/ADR-003-private-administrative-access.md`
+
+## Least-Privilege Terraform Operations
+
+Routine Terraform operations use the dedicated assumed IAM role:
+
+`TerraformOperatorRole`
+
+The authentication flow is:
+
+AWS Login -> credential_process -> STS AssumeRole ->
+TerraformOperatorRole -> Terraform
+
+The operator uses four project-specific managed policies covering:
+
+- Terraform state and private administrative access.
+- Core networking.
+- Network security and lifecycle controls.
+- Compute and EC2 Instance Connect Endpoint operations.
+
+Separate regional and cost guardrails provide explicit-deny protection.
+
+The operator intentionally does not receive general IAM administration
+permissions and cannot modify its own role or managed policies.
+
+IAM bootstrap and recovery operations remain separated under:
+
+`terraform/bootstrap/operator-iam`
+
+The design and operational model are documented in:
+
+- `docs/decisions/ADR-005-least-privilege-terraform-operator.md`
+- `docs/security/iam-least-privilege.md`
+
+The role has been validated for remote-state access, infrastructure refresh,
+no-change planning, expected authorization denials, and IAM Policy Simulator
+scenarios.
+
+This validation is not represented as proof that every complete
+destroy-and-recreate path can run without bootstrap review.
 
 ## Security Validation
 
@@ -277,10 +329,15 @@ Potentially billable infrastructure is evaluated before it is added.
 ├── docs/
 │   ├── decisions/
 │   ├── evidence/
-│   └── incidents/
+│   ├── incidents/
+│   └── security/
 ├── scripts/
 └── terraform/
+    ├── bootstrap/
+    │   ├── operator-iam/
+    │   └── state-backend/
     ├── environments/
+    │   └── dev/
     └── modules/
 ```
 
@@ -333,8 +390,14 @@ The state bucket is provisioned through the isolated
 Runtime backend configuration is supplied through a local,
 Git-ignored `backend.hcl` file.
 
-CI validates both Terraform configurations using isolated temporary
-Terraform data directories and `terraform init -backend=false`.
+CI validates all Terraform stacks using isolated temporary Terraform data
+directories and `terraform init -backend=false`.
+
+The validated stacks are:
+
+- `terraform/bootstrap/state-backend`
+- `terraform/bootstrap/operator-iam`
+- `terraform/environments/dev`
 
 GitHub Actions does not require AWS credentials or access to the
 remote Terraform state.
