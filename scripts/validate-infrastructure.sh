@@ -3,7 +3,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-TF_BOOTSTRAP="${REPO_ROOT}/terraform/bootstrap/state-backend"
+TF_STATE_BACKEND="${REPO_ROOT}/terraform/bootstrap/state-backend"
+TF_OPERATOR_IAM="${REPO_ROOT}/terraform/bootstrap/operator-iam"
 TF_DEV="${REPO_ROOT}/terraform/environments/dev"
 
 TEMP_TF_DATA_ROOT="$(mktemp -d)"
@@ -43,7 +44,11 @@ terraform -chdir="${REPO_ROOT}" fmt -check -recursive
 
 validate_terraform_directory \
   "state-backend" \
-  "${TF_BOOTSTRAP}"
+  "${TF_STATE_BACKEND}"
+
+validate_terraform_directory \
+  "operator-iam" \
+  "${TF_OPERATOR_IAM}"
 
 validate_terraform_directory \
   "dev" \

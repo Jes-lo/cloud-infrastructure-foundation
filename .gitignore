@@ -52,4 +52,4 @@ Thumbs.db
 ansible/inventories/dev/hosts.yml
 
 # Local Terraform backend configuration
-terraform/environments/dev/backend.hcl
+terraform/**/backend.hcl
