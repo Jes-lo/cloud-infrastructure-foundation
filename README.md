@@ -38,6 +38,59 @@ The development environment currently includes:
 The development workload is stopped when not required in order to reduce
 cloud cost.
 
+## Quick Start
+
+### Prerequisites
+
+The local validation workflow expects:
+
+- Linux or WSL.
+- Git.
+- Terraform.
+- TFLint.
+- Checkov.
+
+AWS credentials are not required to run the repository validation workflow.
+
+### Clone and validate
+
+Clone the repository and enter the project directory:
+
+~~~bash
+git clone https://github.com/Jes-lo/cloud-infrastructure-foundation.git
+cd cloud-infrastructure-foundation
+~~~
+
+Run the infrastructure validation workflow:
+
+~~~bash
+./scripts/validate-infrastructure.sh
+~~~
+
+The validation script checks all Terraform stacks with:
+
+- `terraform fmt -check`
+- `terraform init -backend=false`
+- `terraform validate`
+- TFLint
+- Checkov
+
+Remote Terraform state is not accessed during this validation workflow.
+
+### AWS deployment
+
+AWS deployment is intentionally not part of the Quick Start.
+
+Provisioning requires environment-specific backend configuration, Terraform
+variables, AWS authentication, cost review, and appropriate IAM permissions.
+
+Local files such as `backend.hcl`, `terraform.tfvars`, Terraform state,
+Terraform plans, and generated runtime inventory are intentionally excluded
+from Git.
+
+Review the architecture decisions and security documentation before performing
+infrastructure lifecycle operations.
+
 ## Architecture
 
 ```text
