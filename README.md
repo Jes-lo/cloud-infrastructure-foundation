@@ -1,5 +1,7 @@
 # Cloud & Infrastructure Automation Foundation
 
+**Core technologies:** Terraform · Ansible · AWS · Linux · GitHub Actions · TFLint · Checkov
+
 A hands-on cloud infrastructure engineering portfolio project focused on
 designing, provisioning, securing, configuring, and validating
 reproducible AWS infrastructure.
